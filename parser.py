@@ -1,13 +1,59 @@
 import csv
+import sys
+import numpy as np
+import time
+from collections import Counter
+import os
+import nltk
+from math import log
+import operator
+import glob
+import os.path, time
+import csv
+import numpy as np
+import time
+from collections import Counter
+import glob
+import os.path, time
+import json
+import re
+from nltk.tokenize import RegexpTokenizer
+from nltk.stem.porter import *
+from nltk.corpus import stopwords
+from scipy import spatial
+from nltk.tag import StanfordNERTagger
+from math import *
+import ast
+import collections
+
+
+stemmer = PorterStemmer()
+tokenizer = RegexpTokenizer(r'\w+')
+
+def pre_process(doc):
+
+	doc = doc.replace('"', '')
+	tokens = tokenizer.tokenize(doc)
+	stemmed_doc = []
+	for word in tokens:
+		if word not in stopwords.words('english'):
+			try:
+				stemmed_doc.append(stemmer.stem(word))
+			except Exception, e:
+				print e
+				stemmed_doc.append(word)
+
+	return stemmed_doc
+
 def read_file(filename):
 	with open(filename) as f:
 		 content = f.readlines()
 	return content
 
-subs = read_file("subtitles.vtt")
+subs = read_file("./data2/subtitles.vtt")
 #for index, line in enumerate(subs):
 	#print index, line
-# m,.l;io x0/=`	21	 print subs
+#print subs
 print "-----------------------"
 time_index = {}
 
@@ -48,11 +94,22 @@ for line in subs:
 print "---------------"
 print time_index
 
+
+sorted_time = sorted(time_index.items(), key=operator.itemgetter(0))
+
+
+print "------------------ LOLOL -------------------"
+for i in sorted_time:
+	print i
+
 with open("time_index.csv", "w") as csv_file:
 		  writer = csv.writer(csv_file, delimiter=',')
 		  index = 1
-		  for key in time_index.keys():
-		  	line = [index, key[0], key[1], time_index[key]]
+
+		  for i in sorted_time:
+		  	line = [index, i[0][0], i[0][1], pre_process(i[1])]
+		  #for key in time_index.keys():
+		  	#line = [index, key[0].split('.')[0], key[1].split('.')[0], time_index[key]]
 			writer.writerow(line)
 			index = index + 1
 
