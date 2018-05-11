@@ -38,10 +38,12 @@ f.close()
 
 
 documents = {}
+doc_time = {}
 f = open('time_index.csv')
 csv_f = csv.reader(f)
 for row in csv_f:
 	documents[int(row[0])] = ast.literal_eval(row[3])
+	doc_time[int(row[0])] = row[1]
 f.close()
 
 
@@ -97,8 +99,8 @@ for query_word in stemmed_query:
 print rel_docs
 
 print "----------"
-sorted_rel = sorted(rel_docs.items(), key=operator.itemgetter(0))
-print sorted_rel[:]
+sorted_rel = sorted(rel_docs.items(), key=operator.itemgetter(0), reverse=True)
+print sorted_rel[0:5]
 
 
 
@@ -138,32 +140,37 @@ for doc in documents.keys():
 			bm_score = bm_score + bm_25(query_word, current_doc)
 	score[doc] = bm_score
 
-sorted_score = sorted(score.items(), key=operator.itemgetter(1))
+sorted_score = sorted(score.items(), key=operator.itemgetter(1), reverse=True)
 
-print sorted_score
+print sorted_score[0:5]
 
 
 
 print "--------------"
-print documents
+#print documents
 
 print "--------------"
 new_score = {}
 
 for doc_id in range(1, M+1):
-	print "doc_id", doc_id
+	#print "doc_id", doc_id
 	t_score = 0.00
-	for i in range(0, 2):
+	for i in range(0, 3):
 		if(doc_id+i in documents):
-			print "doc_id + i", doc_id+i
+			#print "doc_id + i", doc_id+i
 			t_score = t_score + score[doc_id+i]/(float(i)+1)
 	new_score[doc_id] = t_score
 
 
-print new_score
-new_sorted_score = sorted(new_score.items(), key=operator.itemgetter(1))
+#print new_score
+
+new_sorted_score = sorted(new_score.items(), key=operator.itemgetter(1), reverse=True)
 print "-------"
-print new_sorted_score
+print new_sorted_score[0:5]
+
+for p in new_sorted_score[0:5]:
+	print "doc id: ", p[0], " time: ", doc_time[int(p[0])], " rel: ", p[1] 
+
 
 
 

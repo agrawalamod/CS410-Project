@@ -50,7 +50,7 @@ def read_file(filename):
 		 content = f.readlines()
 	return content
 
-subs = read_file("./data2/subtitles.vtt")
+subs = read_file("./data3/subtitles.vtt")
 #for index, line in enumerate(subs):
 	#print index, line
 #print subs
